@@ -1,11 +1,11 @@
 
 import storage from 'node-persist'
-import throttle from 'lodash/throttle'
+import throttle from 'lodash/throttle.js'
 import { ChatGPTAPI } from 'chatgpt'
 import { marked } from 'marked'
 import { Telegraf, Telegram } from 'telegraf'
-import { adminUser, botToken, openaiApiKey } from './config'
-import logger from './logger'
+import { adminUser, botToken, openaiApiKey } from './config.js'
+import logger from './logger.js'
 
 
 // 3 min 

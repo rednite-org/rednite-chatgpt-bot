@@ -1,11 +1,12 @@
 {
-  "name": "shilo_degen",
+  "name": "rednite-chatgpt-bot",
   "main": "src/index.ts",
   "type": "module",
   "scripts": {
     "start": "tsx .",
     "build": "tsc",
-    "dev": "tsx watch src"
+    "dev": "tsx watch src",
+    "docker": "node dist/index.js"
   },
   "dependencies": {
     "chatgpt": "^5.0.8",
