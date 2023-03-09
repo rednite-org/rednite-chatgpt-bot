@@ -76,6 +76,12 @@ async function main() {
             }
         }
 
+        if (text.trim() === '') {
+            await ctx.reply('⛔️ Неправильный формат. Необходимо указать запрос')
+            
+            return
+        }
+
         let reply: { chatId: number, messageId: number } | null = null
 
         const updateMessage = async (markdown: string) => {
