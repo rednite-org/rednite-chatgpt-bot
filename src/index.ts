@@ -1,8 +1,8 @@
 
 import storage from 'node-persist'
 import throttle from 'lodash/throttle.js'
+import telegramifyMarkdown from 'telegramify-markdown'
 import { ChatGPTAPI } from 'chatgpt'
-import { marked } from 'marked'
 import { Telegraf, Telegram } from 'telegraf'
 import { adminUser, botToken, openaiApiKey } from './config.js'
 import logger from './logger.js'
@@ -84,14 +84,14 @@ async function main() {
 
         let reply: { chatId: number, messageId: number } | null = null
 
-        const updateMessage = async (markdown: string) => {
-            const html = marked.parseInline(markdown)
+        const updateMessage = async (text: string) => {
+            const markdown = telegramifyMarkdown(text)
 
             // Send first message if not exist
             if (!reply) {
-                const res = await ctx.reply(html, {
+                const res = await ctx.reply(markdown, {
                     reply_to_message_id: ctx.message.message_id,
-                    parse_mode: 'HTML'
+                    parse_mode: 'MarkdownV2'
                 })
 
                 reply = {
@@ -106,8 +106,8 @@ async function main() {
                 reply.chatId,
                 reply.messageId,
                 undefined,
-                html,
-                { parse_mode: 'HTML' }
+                markdown,
+                { parse_mode: 'MarkdownV2' }
             )
         }
 
