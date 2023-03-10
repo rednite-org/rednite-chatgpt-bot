@@ -9,6 +9,7 @@
     "docker": "node dist/index.js"
   },
   "dependencies": {
+    "async-mutex": "^0.4.0",
     "chatgpt": "^5.0.8",
     "dotenv": "^16.0.3",
     "lodash": "^4.17.21",

@@ -6,10 +6,13 @@ import { ChatGPTAPI } from 'chatgpt'
 import { Telegraf, Telegram } from 'telegraf'
 import { adminUser, botToken, openaiApiKey } from './config.js'
 import logger from './logger.js'
+import { Mutex } from 'async-mutex'
 
 
 // 3 min 
 const handlerTimeout = 1000 * 60 * 3
+
+const mutex = new Mutex()
 
 async function main() {
 
@@ -127,12 +130,16 @@ async function main() {
 
         const parentMessageId: string = await storage.get(storageKey) 
 
+        const release = await mutex.acquire()
+
         const res = await chatGptApi.sendMessage(text, {
             parentMessageId,
             onProgress: (partial) => textHandler(partial)
         })
 
         await storage.set(storageKey, res.id)
+
+        release()
 
         clearInterval(typingInterval)
     })
