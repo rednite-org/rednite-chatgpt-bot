@@ -132,7 +132,7 @@ async function main() {
             onProgress: (partial) => textHandler(partial)
         })
 
-        await storage.set(storageKey, res.parentMessageId)
+        await storage.set(storageKey, res.id)
 
         clearInterval(typingInterval)
     })
