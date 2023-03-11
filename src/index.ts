@@ -81,7 +81,7 @@ async function main() {
 
         if (text.trim() === '') {
             await ctx.reply('⛔️ Неправильный формат. Необходимо указать запрос')
-            
+
             return
         }
 
@@ -92,26 +92,36 @@ async function main() {
 
             // Send first message if not exist
             if (!reply) {
-                const res = await ctx.reply(markdown, {
-                    reply_to_message_id: ctx.message.message_id,
-                    parse_mode: 'MarkdownV2'
-                })
 
-                reply = {
-                    chatId: res.chat.id,
-                    messageId: res.message_id
+                try {
+                    const res = await ctx.reply(markdown, {
+                        reply_to_message_id: ctx.message.message_id,
+                        parse_mode: 'MarkdownV2'
+                    })
+
+                    reply = {
+                        chatId: res.chat.id,
+                        messageId: res.message_id
+                    }
+                } catch (err) {
+                    logger.error(err)
                 }
 
                 return
             }
 
-            return bot.telegram.editMessageText(
-                reply.chatId,
-                reply.messageId,
-                undefined,
-                markdown,
-                { parse_mode: 'MarkdownV2' }
-            )
+            try {
+                await bot.telegram.editMessageText(
+                    reply.chatId,
+                    reply.messageId,
+                    undefined,
+                    markdown,
+                    { parse_mode: 'MarkdownV2' }
+                )
+            } catch (err) {
+                logger.error(err)
+            }
+
         }
 
         ctx.sendChatAction('typing')
@@ -128,7 +138,7 @@ async function main() {
 
         const storageKey = chat.type === 'private' ? `user_${from.id}` : `group_${chat.id}`
 
-        const parentMessageId: string = await storage.get(storageKey) 
+        const parentMessageId: string = await storage.get(storageKey)
 
         const release = await mutex.acquire()
 
@@ -170,7 +180,7 @@ async function main() {
 
         const allowedGroups: Number[] = (await storage.get('allowed_groups')) || []
         allowedGroups.push(chat.id)
-        
+
         await storage.set('allowed_groups', allowedGroups)
 
         await ctx.reply('✅ Теперь мне разрешено писать сюда')
@@ -228,13 +238,13 @@ async function main() {
 
 
         logger.info(`📩 Command "reset" from ${userInfo} in ${chatInfo}`)
-        
+
         const storageKey = chat.type === 'private' ? `user_${from.id}` : `group_${chat.id}`
 
         await storage.removeItem(storageKey)
 
         logger.info(`🤖 Bot @${me.username} is starting...`)
-    
+
         await ctx.reply('🔄 Диалог очищен.')
     })
 
