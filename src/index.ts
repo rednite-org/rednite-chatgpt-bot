@@ -88,7 +88,8 @@ async function main() {
         let reply: { chatId: number, messageId: number } | null = null
 
         const updateMessage = async (text: string) => {
-            const markdown = telegramifyMarkdown(text)
+            const escapedText = text.replace(/\>/g, "\\>")
+            const markdown = telegramifyMarkdown(escapedText)
 
             // Send first message if not exist
             if (!reply) {
@@ -105,6 +106,7 @@ async function main() {
                     }
                 } catch (err) {
                     logger.error(err)
+                    logger.info(`raw text: ${text}`)
                 }
 
                 return
@@ -120,6 +122,7 @@ async function main() {
                 )
             } catch (err) {
                 logger.error(err)
+                logger.info(`raw text: ${text}`)
             }
 
         }
